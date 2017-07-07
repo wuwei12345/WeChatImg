@@ -1,5 +1,7 @@
 package com.img.wechatimg
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Context
@@ -11,15 +13,13 @@ import android.support.v4.view.ViewPager
 import android.util.Pair
 import android.view.View
 import android.widget.ImageView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.img.wechatimg.adapter.popAdapter
 import kotlinx.android.synthetic.main.activity_image.*
 import kotlin.collections.ArrayList
 
 
 class ImageActivity : AppCompatActivity() {
-    var look_imgs = ArrayList<ImageView>()
+    lateinit var adapter: popAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image)
@@ -27,17 +27,12 @@ class ImageActivity : AppCompatActivity() {
     }
 
     private fun initview() {
-        look_imgs.clear()
         var list = intent.extras.getStringArray(STRLIST)
-        list.indices.forEach { s ->
-            val img = ImageView(this)
-            Glide.with(this).load(list[s]).into(img)
-            look_imgs.add(img)
-            img.setOnClickListener { supportFinishAfterTransition() }
-        }
         viewpage.transitionName = "img" + intent.getIntExtra(IMGPOS, 0)
-        viewpage.adapter = popAdapter(look_imgs)
+        adapter = popAdapter(list)
+        viewpage.adapter = adapter
         viewpage.currentItem = intent.getIntExtra(IMGPOS, 0)
+        //滑动监听改变transitionName
         viewpage.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
 
